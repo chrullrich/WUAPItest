@@ -17,3 +17,11 @@ If the following conditions are met, it will create a file at `C:\Windows\reboot
 * The environment variable `PDQSERVER` is set.
 * The value of this environment variable does not match the local host name. (If the value contains dots, only the part
   before the first dot is considered.)
+
+### Exit codes
+
+* 0: No applicable updates, or all non-interactive updates installed and no reboot required
+* 1: There are applicable updates, but all of them require interaction
+* 1603: Installation error
+* 3010: All non-interactive updates installed, reboot required
+
