@@ -14,6 +14,7 @@ on a target system. It works outside of PDQ Deploy as well.
 
 If the following conditions are met, it will create a file at `C:\Windows\reboot.required`:
 
+* At least one update that requires a reboot has been installed.
 * The environment variable `PDQSERVER` is set.
 * The value of this environment variable does not match the local host name. (If the value contains dots, only the part
   before the first dot is considered.)
