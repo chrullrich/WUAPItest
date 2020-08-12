@@ -25,3 +25,8 @@ If the following conditions are met, it will create a file at `C:\Windows\reboot
 * 1603: Installation error
 * 3010: All non-interactive updates installed, reboot required
 
+### But why?
+
+“But why? There is plenty of VBScript (or PowerShell) out there that runs entirely without a C# compiler! Just check Google!”
+
+Well ... have you tried any of it on Windows 10 2004 recently?
