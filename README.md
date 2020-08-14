@@ -28,6 +28,6 @@ If the following conditions are met, it will create a file at `C:\Windows\reboot
 
 ### But why?
 
-ìBut why? There is plenty of VBScript (or PowerShell) out there that runs entirely without a C# compiler! Just check Google!î
+‚ÄúBut why? There is plenty of VBScript (or PowerShell) out there that runs entirely without a C# compiler! Just check Google!‚Äù
 
 Well ... have you tried any of it on Windows 10 2004 recently?
