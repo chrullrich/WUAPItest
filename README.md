@@ -31,3 +31,11 @@ If the following conditions are met, it will create a file at `C:\Windows\reboot
 “But why? There is plenty of VBScript (or PowerShell) out there that runs entirely without a C# compiler! Just check Google!”
 
 Well ... have you tried any of it on Windows 10 2004 recently?
+
+### Inspiration
+
+A WUA API sample formerly at
+<https://msdn.microsoft.com/en-us/library/windows/desktop/aa387102(v=vs.85).aspx>.
+This URL now redirects to a [much bigger sample
+script](https://docs.microsoft.com/en-us/windows/win32/wua_sdk/searching--downloading--and-installing-updates).
+
