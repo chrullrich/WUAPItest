@@ -53,8 +53,9 @@ namespace WUAPItestCs
                     continue;
                 }
 
-                if (update.Title.StartsWith("Feature update")) {
-                    Console.WriteLine("    skipped because feature updates are interactive");
+                if (update.Title.StartsWith("Feature update")
+                        && !update.Title.Contains("Enablement Package")) {
+                    Console.WriteLine("    skipped because full feature updates are interactive");
                     continue;
                 }
 
