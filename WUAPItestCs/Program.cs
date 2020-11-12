@@ -104,12 +104,35 @@ namespace WUAPItestCs
             var operationResultCode = installationResult.ResultCode;
             Console.WriteLine("Installation result: " + operationResultCode);
 
-            if (operationResultCode == OperationResultCode.orcAborted
-                || operationResultCode == OperationResultCode.orcFailed) {
-                Console.Error.WriteLine("Installation aborted or failed.");
-                return (int)BetterWin32Errors.Win32Error.ERROR_INSTALL_FAILED;
-            }
+            switch (operationResultCode) {
+                case OperationResultCode.orcAborted:
+                case OperationResultCode.orcFailed:
+                    Console.Error.WriteLine("Installation aborted or failed.");
+                    return (int)BetterWin32Errors.Win32Error.ERROR_INSTALL_FAILED;
+                case OperationResultCode.orcSucceededWithErrors:
+                {
+                    Console.Error.WriteLine("Updates with errors:");
+                    for (var i = 0; i < downloaded.Count; ++i) {
+                        var result = installationResult.GetUpdateResult(i);
+                        switch (result.ResultCode) {
+                            case OperationResultCode.orcSucceeded:
+                                break;
+                            case OperationResultCode.orcAborted:
+                                Console.Error.WriteLine($"{downloaded[i].Title}: Installation aborted.");
+                                break;
+                            case OperationResultCode.orcFailed:
+                                Console.Error.WriteLine($"{downloaded[i].Title}: Failed, hr=0x{result.HResult:x8}");
+                                break;
+                            default:
+                                Console.Error.WriteLine($"{downloaded[i].Title}: {result.ResultCode}");
+                                break;
+                        }
+                    }
 
+                    break;
+                }
+            }
+            
             if (installationResult.RebootRequired) {
                 Console.WriteLine("Installed updates require reboot.");
 
