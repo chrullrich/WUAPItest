@@ -104,57 +104,57 @@ namespace WUAPItestCs
             var operationResultCode = installationResult.ResultCode;
             Console.WriteLine("Installation result: " + operationResultCode);
 
+
             switch (operationResultCode) {
-                case OperationResultCode.orcAborted:
-                case OperationResultCode.orcFailed:
-                    Console.Error.WriteLine("Installation aborted or failed.");
-                    return (int)BetterWin32Errors.Win32Error.ERROR_INSTALL_FAILED;
-                case OperationResultCode.orcSucceededWithErrors:
-                {
-                    Console.Error.WriteLine("Updates with errors:");
-                    for (var i = 0; i < downloaded.Count; ++i) {
-                        var result = installationResult.GetUpdateResult(i);
-                        switch (result.ResultCode) {
-                            case OperationResultCode.orcSucceeded:
-                                break;
-                            case OperationResultCode.orcAborted:
-                                Console.Error.WriteLine($"{downloaded[i].Title}: Installation aborted.");
-                                break;
-                            case OperationResultCode.orcFailed:
-                                Console.Error.WriteLine($"{downloaded[i].Title}: Failed, hr=0x{result.HResult:x8}");
-                                break;
-                            default:
-                                Console.Error.WriteLine($"{downloaded[i].Title}: {result.ResultCode}");
-                                break;
+                case OperationResultCode.orcSucceeded:
+                    if (installationResult.RebootRequired)
+                    {
+                        Console.WriteLine("Installed updates require reboot.");
+
+                        var pdqServer = Environment.GetEnvironmentVariable("PDQSERVER");
+                        pdqServer = pdqServer?.Split('.')[0];
+
+                        if (pdqServer == null) {
+                            Console.WriteLine("Not running from PDQ Deploy; skipping required reboot.");
+                            return (int)Win32Error.ERROR_SUCCESS_REBOOT_REQUIRED;
+                        } else if (string.Compare(pdqServer, Environment.MachineName,
+                            StringComparison.InvariantCultureIgnoreCase) == 0) {
+                            Console.WriteLine("Skipping required reboot because this is " +
+                                              "the PDQ Deploy Server.");
+                            return (int)Win32Error.ERROR_SUCCESS_REBOOT_REQUIRED;
+                        } else {
+                            File.Create(RebootFlagFileName);
                         }
+
                     }
 
+                    return (int)Win32Error.ERROR_SUCCESS;
+                case OperationResultCode.orcAborted:
+                case OperationResultCode.orcFailed:
+                case OperationResultCode.orcSucceededWithErrors:
+                    {
+                        Console.Error.WriteLine("Installation aborted or failed.");
+                        for (var i = 0; i < downloaded.Count; ++i) {
+                            var result = installationResult.GetUpdateResult(i);
+                            switch (result.ResultCode) {
+                                case OperationResultCode.orcSucceeded:
+                                    break;
+                                case OperationResultCode.orcAborted:
+                                    Console.Error.WriteLine($"{downloaded[i].Title}: Installation aborted.");
+                                    break;
+                                case OperationResultCode.orcFailed:
+                                    Console.Error.WriteLine($"{downloaded[i].Title}: Failed, hr=0x{result.HResult:x8}");
+                                    break;
+                                default:
+                                    Console.Error.WriteLine($"{downloaded[i].Title}: {result.ResultCode}");
+                                    break;
+                            }
+                        }
+                    }
                     break;
-                }
-            }
-            
-            if (installationResult.RebootRequired) {
-                Console.WriteLine("Installed updates require reboot.");
-
-                var pdqServer = Environment.GetEnvironmentVariable("PDQSERVER");
-                pdqServer = pdqServer?.Split('.')[0];
-
-                if (pdqServer == null) {
-                    Console.WriteLine("Not running from PDQ Deploy; skipping required reboot.");
-                    return (int)Win32Error.ERROR_SUCCESS_REBOOT_REQUIRED;
-                }
-
-                if (string.Compare(pdqServer, Environment.MachineName,
-                    StringComparison.InvariantCultureIgnoreCase) == 0) {
-                    Console.WriteLine("Skipping required reboot because this is " +
-                                      "the PDQ Deploy Server.");
-                    return (int)Win32Error.ERROR_SUCCESS_REBOOT_REQUIRED;
-                }
-
-                File.Create(RebootFlagFileName);
             }
 
-            return (int)BetterWin32Errors.Win32Error.ERROR_SUCCESS;
+            return (int)Win32Error.ERROR_INSTALL_FAILED;
         }
     }
 }
