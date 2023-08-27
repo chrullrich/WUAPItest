@@ -1,0 +1,4 @@
+[bugtraq "otrs"]
+url = "https://otrs.tradlux.eu/agent/%BUGID%"
+logregex = "Ticket#([0-9]{16})"
+loglinkregex = "(Ticket#[0-9]{16})"
